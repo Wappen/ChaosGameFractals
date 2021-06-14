@@ -13,6 +13,6 @@ Note: The resolution does not affect the preview window's resolution and only ch
 - <kbd>s</kbd> - Save image
 
 ## Images
-![Image 3](./800x800_n-8_m-true_9082361282916966991.jpg)
-![Image 1](./800x800_n-6_m-false_4989787680399795118.jpg)
-![Image 2](./800x800_n-7_m-true_607341490451242251.jpg)
+![Image 3](images/800x800_n-8_m-true_9082361282916966991.jpg)
+![Image 1](images/800x800_n-6_m-false_4989787680399795118.jpg)
+![Image 2](images/800x800_n-7_m-true_607341490451242251.jpg)
