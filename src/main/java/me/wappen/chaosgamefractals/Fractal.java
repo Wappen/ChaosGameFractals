@@ -16,7 +16,7 @@ public class Fractal {
     final boolean mode;
     final PVector[] vertices;
     final long[][] buffer;
-    long totalIters = 0;
+    long iters = 0;
     double scale = 1.0;
 
     public Fractal(PApplet parent, int width, int height, int vertexCount, boolean mode) {
@@ -35,12 +35,12 @@ public class Fractal {
         }
     }
 
-    public void simulate(int iters) {
+    public void simulate(int iterationCount) {
         int vertex = (int) parent.random(0, vertices.length);
         int lastVertex = vertex;
         PVector pos = vertices[vertex];
 
-        for (int i = 0; i <= (iters + vertices.length); i++) {
+        for (int i = 0; i <= (iterationCount + vertices.length); i++) {
             if (mode) {
                 do {
                     vertex = (int) parent.random(0, vertices.length);
@@ -59,7 +59,7 @@ public class Fractal {
                 int y = (int) pos.y;
 
                 buffer[x][y]++;
-                totalIters++;
+                iters++;
 
                 if (buffer[x][y] > scale)
                     scale = buffer[x][y];
@@ -95,6 +95,6 @@ public class Fractal {
     }
 
     public long getTotalIters() {
-        return totalIters;
+        return iters;
     }
 }
