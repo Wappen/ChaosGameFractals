@@ -1,5 +1,5 @@
 # ChaosGameFractals
-Java Chaos Game implementation using [Processing](https://processing.org/).
+Java [Chaos Game](https://en.wikipedia.org/wiki/Chaos_game) implementation using [Processing](https://processing.org/).
 
 ## Usage
 By default the resolution is set to 800x800. To increase it add the resolution as command-line argument.
