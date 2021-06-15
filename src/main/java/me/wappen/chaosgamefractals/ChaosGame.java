@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 public class ChaosGame extends PApplet {
     int resX = 800;
     int resY = 800;
+    int iters;
     int n;
     int g; // current gradient index
     boolean mode;
@@ -23,7 +24,12 @@ public class ChaosGame extends PApplet {
     PImage gradients;
     int[] gradient;
 
+    int startMillis;
+
     long lastNanos;
+    float deltaTime;
+
+    boolean run = true;
 
     private static final Pattern argsPattern = Pattern.compile("\\d+x\\d+");
 
@@ -34,6 +40,8 @@ public class ChaosGame extends PApplet {
 
     @Override
     public void setup() {
+        startMillis = millis();
+
         gradients = loadImage("gradients.bmp");
         gradient = loadGradient(gradients, g);
 
@@ -47,7 +55,7 @@ public class ChaosGame extends PApplet {
                     resX = w;
                     resY = h;
                 } else {
-                    println("Invalid argument! Example: 800x800");
+                    println("Invalid argument! Use for example: 800x800");
                     exit();
                 }
             }
@@ -64,21 +72,23 @@ public class ChaosGame extends PApplet {
         n = 5;
         g = 0;
         createNewFractal();
+
+        for (int i = 0; i < 4; i++) {
+            thread("simulate");
+        }
     }
 
     @Override
     public void draw() {
         background(0);
-        float deltaTime = ((frameRateLastNanos - lastNanos) / 1e+9f) / 60f;
-        int iters = (int)(100f / deltaTime);
-        fractal.simulate(iters);
+        deltaTime = ((frameRateLastNanos - lastNanos) / 1e+9f) / 60f;
 
         imageMode(CORNER);
         image(fractal.getImage(gradient, width, height), 0, 0);
 
         stroke(255);
         textAlign(LEFT, TOP);
-        text("fps: " + (int)frameRate + "; iters: " + String.format("%,dk", iters / 1000) + "/" + String.format("%,dk", fractal.getTotalIters() / 1000) + "\n" +
+        text("fps: " + (int)frameRate + "; iters: " + String.format("%,dk", fractal.getTotalIters() / 1000) + "\n" +
                 "gradient: " + (g + 1) + "/" + gradients.height + "\n" +
                 "n: " + n + "; m: " + mode + "\n" +
                 "res: " + resX + "x" + resY, 5, 5);
@@ -90,6 +100,12 @@ public class ChaosGame extends PApplet {
                 "s: save image", 5, height - 5);
 
         lastNanos = frameRateLastNanos;
+    }
+
+    public void simulate() {
+        while (run) {
+            fractal.simulate(iters);
+        }
     }
 
     @Override
@@ -135,6 +151,8 @@ public class ChaosGame extends PApplet {
     }
 
     private void createNewFractal() {
+        // min because the fractal has height and width with min
+        iters = min(resX, resY) * n;
         fractal = new Fractal(this, resX, resY, n, mode);
     }
 

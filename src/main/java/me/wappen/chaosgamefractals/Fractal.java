@@ -71,10 +71,13 @@ public class Fractal {
         PImage image = parent.createImage(width, height, RGB);
         image.loadPixels();
 
-        if (width == buffer.length && buffer[0].length == height) {
+        if (width == buffer.length && height == buffer[0].length) {
             for (int x = 0; x < buffer.length; x++) {
                 for (int y = 0; y < buffer[x].length; y++) {
-                    image.pixels[y * buffer.length + x] = colors[(int) ((buffer[x][y] / scale) * (colors.length - 1))];
+                    int colorsIndex = (int) Math.min((buffer[x][y] / scale) * (colors.length - 1), colors.length - 1);
+                    int pixelsIndex = y * buffer.length + x;
+                    int col = colors[colorsIndex];
+                    image.pixels[pixelsIndex] = col;
                 }
             }
         }
