@@ -4,6 +4,8 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
+import java.util.Random;
+
 import static processing.core.PConstants.RGB;
 
 /**
@@ -12,6 +14,7 @@ import static processing.core.PConstants.RGB;
  */
 
 public class Fractal {
+    final Random rng;
     final PApplet parent;
     final boolean mode;
     final PVector[] vertices;
@@ -20,43 +23,47 @@ public class Fractal {
     double scale = 1.0;
 
     public Fractal(PApplet parent, int width, int height, int vertexCount, boolean mode) {
+        this.rng = new Random();
         this.parent = parent;
         this.mode = mode;
 
-        buffer = new long[width][height];
+        this.buffer = new long[width][height];
 
         float radius = PApplet.min(width, height) / 2f - 5;
-        vertices = new PVector[vertexCount];
+        this.vertices = new PVector[vertexCount];
         for (int i = 0; i < vertexCount; i++) {
             float x = (PApplet.sin((float)i / vertexCount * 2f * parent.PI) * radius) + width / 2f;
             float y = (PApplet.cos((float)i / vertexCount * 2f * parent.PI) * radius) + height / 2f;
 
-            vertices[i] = new PVector(x, y);
+            this.vertices[i] = new PVector(x, y);
         }
     }
 
     public void simulate(int iterationCount) {
-        int vertex = (int) parent.random(0, vertices.length);
+        int x;
+        int y;
+        int vertex = rng.nextInt(vertices.length);
         int lastVertex = vertex;
-        PVector pos = vertices[vertex];
+        PVector pos = new PVector(vertices[vertex].x, vertices[vertex].y);
 
         for (int i = 0; i <= (iterationCount + vertices.length); i++) {
             if (mode) {
                 do {
-                    vertex = (int) parent.random(0, vertices.length);
+                    vertex = rng.nextInt(vertices.length);
                 } while (vertex == lastVertex);
                 lastVertex = vertex;
             }
             else {
-                vertex = (int) parent.random(0, vertices.length);
+                vertex = rng.nextInt(vertices.length);
             }
 
-            pos = PVector.lerp(pos, vertices[vertex], 0.5f);
+            //pos = PVector.lerp(pos, vertices[vertex], 0.5f);
+            moveHalf(pos, vertices[vertex]);
 
             // Prevent clustered points by skipping first iteration
             if (i > vertices.length) {
-                int x = (int) pos.x;
-                int y = (int) pos.y;
+                x = (int) pos.x;
+                y = (int) pos.y;
 
                 buffer[x][y]++;
                 iters++;
@@ -65,6 +72,11 @@ public class Fractal {
                     scale = buffer[x][y];
             }
         }
+    }
+
+    private void moveHalf(PVector v1, PVector v2) {
+        v1.x += (v2.x - v1.x) / 2f;
+        v1.y += (v2.y - v1.y) / 2f;
     }
 
     public PImage getImage(int[] colors, int width, int height) {

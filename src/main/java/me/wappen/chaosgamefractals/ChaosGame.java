@@ -24,11 +24,6 @@ public class ChaosGame extends PApplet {
     PImage gradients;
     int[] gradient;
 
-    int startMillis;
-
-    long lastNanos;
-    float deltaTime;
-
     boolean run = true;
 
     private static final Pattern argsPattern = Pattern.compile("\\d+x\\d+");
@@ -40,8 +35,6 @@ public class ChaosGame extends PApplet {
 
     @Override
     public void setup() {
-        startMillis = millis();
-
         gradients = loadImage("gradients.bmp");
         gradient = loadGradient(gradients, g);
 
@@ -81,8 +74,6 @@ public class ChaosGame extends PApplet {
     @Override
     public void draw() {
         background(0);
-        deltaTime = ((frameRateLastNanos - lastNanos) / 1e+9f) / 60f;
-
         imageMode(CORNER);
         image(fractal.getImage(gradient, width, height), 0, 0);
 
@@ -98,8 +89,6 @@ public class ChaosGame extends PApplet {
                 "right/left: gradient +/- 1 \n" +
                 "ctrl: toggle mode\n" +
                 "s: save image", 5, height - 5);
-
-        lastNanos = frameRateLastNanos;
     }
 
     public void simulate() {
